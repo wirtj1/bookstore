@@ -1,12 +1,11 @@
 package org.books.persistence.entity;
 
-import org.books.persistence.enumeration.CreditCardType;
-
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import org.books.persistence.enumeration.CreditCardType;
 
 @Embeddable
 public class CreditCard implements Serializable {

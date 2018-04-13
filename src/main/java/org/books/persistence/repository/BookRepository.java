@@ -1,22 +1,25 @@
 package org.books.persistence.repository;
 
-import org.books.persistence.entity.Book;
-
+import java.util.List;
 import javax.ejb.Stateless;
-import javax.inject.Named;
+import javax.ejb.TransactionAttribute;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.List;
+import org.books.persistence.entity.Book;
 
-@Stateless(mappedName="BookRepository")
-public class BookRepository extends Repository<Book> implements BookRepositoryRemote {
+import static javax.ejb.TransactionAttributeType.SUPPORTS;
 
+@Stateless
+public class BookRepository extends Repository<Book> {
+
+	@TransactionAttribute(SUPPORTS)
 	public Book find(String isbn) {
 		return super.find(Book.class, isbn);
 	}
 
+	@TransactionAttribute(SUPPORTS)
 	public List<Book> search(String keywords) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Book> query = builder.createQuery(Book.class);

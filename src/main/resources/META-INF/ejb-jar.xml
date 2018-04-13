@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ejb-jar version="3.2"
+		 xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/ejb-jar_3_2.xsd">
+
+	<module-name>bookstore-ejb</module-name>
+
+	<enterprise-beans>
+		<session>
+			<ejb-name>OrderService</ejb-name>
+			<env-entry>
+				<env-entry-name>creditCardNumberPattern</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>\d{16}</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>creditCardPaymentLimit</env-entry-name>
+				<env-entry-type>java.lang.Long</env-entry-type>
+				<env-entry-value>1000</env-entry-value>
+			</env-entry>
+		</session>
+	</enterprise-beans>
+
+</ejb-jar>

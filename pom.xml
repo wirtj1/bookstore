@@ -38,6 +38,7 @@
     </dependencies>
 
     <build>
+        <finalName>bookstore-ejb</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -72,6 +73,23 @@
                     <notimestamp>true</notimestamp>
                     <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <configuration>
+                            <tasks>
+                                <copy file="target/bookstore-ejb.jar"
+                                      todir="C:\Program Files (x86)\glassfish-4.1.1\glassfish\domains\bookstore\autodeploy"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

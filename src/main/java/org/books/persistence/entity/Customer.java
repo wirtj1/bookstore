@@ -1,7 +1,15 @@
 package org.books.persistence.entity;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "CUSTOMER")
@@ -9,7 +17,7 @@ import java.io.Serializable;
 	@NamedQuery(name = "findCustomer",
 			query = "SELECT c FROM Customer c WHERE LOWER(c.email) = LOWER(:email)"),
 	@NamedQuery(name = "searchCustomers",
-			query = "SELECT NEW CustomerInfo(c.number, c.firstName, c.lastName, c.email) "
+			query = "SELECT NEW org.books.persistence.dto.CustomerInfo(c.number, c.firstName, c.lastName, c.email) "
 			+ "FROM Customer c WHERE LOWER(c.firstName) LIKE LOWER(:pattern) OR LOWER(c.lastName) LIKE LOWER(:pattern)")
 })
 public class Customer implements Serializable {
