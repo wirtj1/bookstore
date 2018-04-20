@@ -5,18 +5,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
-import javax.jms.JMSConnectionFactory;
-import javax.jms.JMSContext;
-import javax.jms.JMSProducer;
-import javax.jms.Queue;
-import javax.jms.TextMessage;
+import javax.jms.*;
 
 import org.books.application.dto.PurchaseOrder;
 import org.books.application.dto.PurchaseOrderItem;
@@ -59,7 +54,7 @@ public class OrderService implements OrderServiceRemote {
 	private Long creditCardPaymentLimit;
 
 	@Inject
-	@JMSConnectionFactory("jms/orderQueue")
+	@JMSConnectionFactory("jms/connectionFactory")
 	private JMSContext jmsContext;
 
 	@Resource(lookup="jms/orderQueue")
@@ -71,7 +66,7 @@ public class OrderService implements OrderServiceRemote {
 		logger.log(Level.INFO, "Placing order for customer with number ''{0}''", purchaseOrder.getCustomerNr());
 		Order order = createOrder(purchaseOrder);
 		makePayment(order);
-		sendMessage(order);
+		processOrder(order);
 		return convertOrder(order);
 	}
 
@@ -156,9 +151,9 @@ public class OrderService implements OrderServiceRemote {
 		return new CustomerInfo(customer.getNumber(), customer.getFirstName(), customer.getLastName(), customer.getEmail());
 	}
 
-	private void sendMessage(Order order){
+	private void processOrder(Order order){
 		JMSProducer producer = jmsContext.createProducer();
-		TextMessage msg = jmsContext.createTextMessage(order.getOrderString());
+		Message msg = jmsContext.createTextMessage(order.getOrderString());
 		producer.send(orderqueue, msg);
 	}
 }
