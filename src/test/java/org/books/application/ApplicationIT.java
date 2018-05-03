@@ -10,6 +10,7 @@ import org.books.application.dto.PurchaseOrderItem;
 import org.books.application.dto.SalesOrder;
 import org.books.application.service.CatalogServiceRemote;
 import org.books.application.service.CustomerServiceRemote;
+import org.books.application.service.OrderService;
 import org.books.application.service.OrderServiceRemote;
 import org.books.persistence.entity.Address;
 import org.books.persistence.entity.CreditCard;
@@ -82,6 +83,7 @@ public class ApplicationIT {
 
 	@Test(dependsOnMethods = {"searchBooks", "registerCustomer"})
 	public void placeOrder() throws Exception {
+		//TODO addBooks???
 		order = orderService.placeOrder(new PurchaseOrder(customer.getNumber(), items));
 		assertNotNull(orderService.findOrder(order.getNumber()));
 	}

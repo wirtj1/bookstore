@@ -111,4 +111,12 @@ public class Book implements Serializable {
 	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
+
+	public void setBindingAsString(String bindingAsString) {
+		try {
+			this.binding = BookBinding.valueOf(bindingAsString.trim().toUpperCase());
+		}catch(IllegalArgumentException e){
+			this.binding=BookBinding.UNKNOWN;
+		}
+	}
 }

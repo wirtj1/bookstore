@@ -11,10 +11,8 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
-import javax.jms.JMSConnectionFactory;
-import javax.jms.JMSContext;
-import javax.jms.Message;
-import javax.jms.Queue;
+import javax.jms.*;
+
 import org.books.application.dto.PurchaseOrder;
 import org.books.application.dto.PurchaseOrderItem;
 import org.books.application.dto.SalesOrder;
@@ -32,6 +30,7 @@ import org.books.persistence.entity.Customer;
 import org.books.persistence.entity.Order;
 import org.books.persistence.entity.OrderItem;
 import org.books.persistence.enumeration.OrderStatus;
+import org.books.persistence.repository.BookRepository;
 import org.books.persistence.repository.OrderRepository;
 
 import static javax.ejb.TransactionAttributeType.REQUIRED;
@@ -49,6 +48,8 @@ public class OrderService implements OrderServiceRemote {
 	private CustomerService customerService;
 	@EJB
 	private OrderRepository orderRepository;
+	@EJB
+	private BookRepository bookRepository;
 
 	@Inject
 	@JMSConnectionFactory("jms/connectionFactory")
@@ -117,6 +118,8 @@ public class OrderService implements OrderServiceRemote {
 		BigDecimal totalPrice = BigDecimal.ZERO;
 		for (PurchaseOrderItem item : purchaseOrder.getItems()) {
 			Book book = catalogService.findBook(item.getIsbn());
+			//Items bzw books were not persisted
+			bookRepository.persist(book);
 			order.getItems().add(new OrderItem(book, item.getQuantity(), book.getPrice()));
 			totalPrice = totalPrice.add(book.getPrice().multiply(new BigDecimal(item.getQuantity())));
 		}
