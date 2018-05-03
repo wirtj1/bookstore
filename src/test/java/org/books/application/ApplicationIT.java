@@ -1,7 +1,5 @@
 package org.books.application;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -14,13 +12,11 @@ import org.books.application.service.CatalogServiceRemote;
 import org.books.application.service.CustomerServiceRemote;
 import org.books.application.service.OrderServiceRemote;
 import org.books.persistence.entity.Address;
-import org.books.persistence.entity.Book;
 import org.books.persistence.entity.CreditCard;
 import org.books.persistence.entity.Customer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import static org.books.persistence.enumeration.BookBinding.PAPERBACK;
 import static org.books.persistence.enumeration.CreditCardType.MASTERCARD;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -34,8 +30,8 @@ public class ApplicationIT {
 	private CustomerServiceRemote customerService;
 	private OrderServiceRemote orderService;
 
-	private List<Book> books;
 	private Customer customer;
+	private List<PurchaseOrderItem> items;
 	private SalesOrder order;
 
 	@BeforeClass
@@ -51,22 +47,15 @@ public class ApplicationIT {
 
 	@BeforeClass
 	public void initData() {
-		books = Arrays.asList(
-				new Book("143024626X", "Beginning Java EE 7", "Antonio Goncalves", "Apress", 2013,
-						PAPERBACK, 608, new BigDecimal("49.99")),
-				new Book("1449370179", "Java EE 7 Essentials", "Arun Gupta", "O'Reilly Media", 2013,
-						PAPERBACK, 362, new BigDecimal("49.99")));
 		customer = new Customer("Alice", "Smith", "alice@example.org", "alice",
 				new Address("123 Maple Street", "Mill Valley", "CA-90952", "US"),
 				new CreditCard(MASTERCARD, "5400000000000005", 01, 2020));
+		items = Arrays.asList(new PurchaseOrderItem("143024626X", 1), new PurchaseOrderItem("1449370179", 1));
 	}
 
 	@Test
-	public void addBooks() throws Exception {
-		for (Book book : books) {
-			catalogService.addBook(book);
-			assertNotNull(catalogService.findBook(book.getIsbn()));
-		}
+	public void findBook() throws Exception {
+		assertNotNull(catalogService.findBook("143024626X"));
 	}
 
 	@Test
@@ -91,12 +80,8 @@ public class ApplicationIT {
 		assertFalse(customerService.searchCustomers("smith").isEmpty());
 	}
 
-	@Test(dependsOnMethods = {"addBooks", "registerCustomer"})
+	@Test(dependsOnMethods = {"searchBooks", "registerCustomer"})
 	public void placeOrder() throws Exception {
-		List<PurchaseOrderItem> items = new ArrayList<>();
-		for (Book book : books) {
-			items.add(new PurchaseOrderItem(book.getIsbn(), 1));
-		}
 		order = orderService.placeOrder(new PurchaseOrder(customer.getNumber(), items));
 		assertNotNull(orderService.findOrder(order.getNumber()));
 	}

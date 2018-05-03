@@ -33,10 +33,8 @@ public class OrderProcessor implements MessageListener {
 
 	@EJB
 	private OrderRepository orderRepository;
-
 	@Resource
 	private TimerService timerService;
-
 	@Resource(name = "orderProcessingTime")
 	private Long orderProcessingTime;
 

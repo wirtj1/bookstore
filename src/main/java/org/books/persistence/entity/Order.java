@@ -22,28 +22,24 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.books.persistence.enumeration.OrderStatus;
 
 @Entity
 @Table(name = "BOOK_ORDER")
 @NamedQuery(name = "searchOrders",
 		query = "SELECT NEW org.books.persistence.dto.OrderInfo(o.number, o.date, o.amount, o.status) "
-				+ "FROM Order o WHERE o.customer = :customer AND o.date >= :startDate AND o.date < :endDate")
+		+ "FROM Order o WHERE o.customer = :customer AND o.date >= :startDate AND o.date < :endDate")
 public class Order implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "NUMBER")
 	private Long number;
-
 	@Column(name = "ORDER_DATE", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
-
 	@Column(name = "AMOUNT", precision = 7, scale = 2, nullable = false)
 	private BigDecimal amount;
-
 	@Column(name = "STATUS", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
@@ -51,13 +47,10 @@ public class Order implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "CUSTOMER_NR")
 	private Customer customer;
-
 	@Embedded
 	private Address address;
-
 	@Embedded
 	private CreditCard creditCard;
-
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "ORDER_NR")
 	private List<OrderItem> items = new ArrayList<>();
@@ -138,15 +131,5 @@ public class Order implements Serializable {
 
 	public void setItems(List<OrderItem> items) {
 		this.items = items;
-	}
-
-	public String getOrderString() {
-		StringBuilder str = new StringBuilder("ORDER ");
-		str.append("\nThe Customer: ").append(this.customer.getFirstName())
-				.append(" ").append(this.customer.getLastName())
-				.append("\nmade a new Order and payed it. The order number is: ")
-				.append(this.number);
-
-		return str.toString();
 	}
 }

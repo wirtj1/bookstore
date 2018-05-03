@@ -19,14 +19,11 @@ public class OrderItem implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "ISBN")
 	private Book book;
-
 	@Column(name = "QUANTITY", nullable = false)
 	private Integer quantity;
-
 	@Column(name = "PRICE", precision = 7, scale = 2, nullable = false)
 	private BigDecimal price;
 

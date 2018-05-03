@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bindings xmlns="http://java.sun.com/xml/ns/jaxws">
+	<enableWrapperStyle>false</enableWrapperStyle>
+	<handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
+		<handler-chain>
+			<handler>
+				<handler-name>SecurityHandler</handler-name>
+				<handler-class>org.books.integration.AmazonSecurityHandler</handler-class>
+			</handler>
+		</handler-chain>
+	</handler-chains>
+</bindings>

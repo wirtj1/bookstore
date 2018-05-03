@@ -11,8 +11,10 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
-import javax.jms.*;
-
+import javax.jms.JMSConnectionFactory;
+import javax.jms.JMSContext;
+import javax.jms.Message;
+import javax.jms.Queue;
 import org.books.application.dto.PurchaseOrder;
 import org.books.application.dto.PurchaseOrderItem;
 import org.books.application.dto.SalesOrder;
@@ -48,17 +50,16 @@ public class OrderService implements OrderServiceRemote {
 	@EJB
 	private OrderRepository orderRepository;
 
+	@Inject
+	@JMSConnectionFactory("jms/connectionFactory")
+	private JMSContext jmsContext;
+	@Resource(lookup = "jms/orderQueue")
+	private Queue queue;
+
 	@Resource(name = "creditCardNumberPattern")
 	private String creditCardNumberPattern;
 	@Resource(name = "creditCardPaymentLimit")
 	private Long creditCardPaymentLimit;
-
-	@Inject
-	@JMSConnectionFactory("jms/connectionFactory")
-	private JMSContext jmsContext;
-
-	@Resource(lookup="jms/orderQueue")
-	private Queue orderqueue;
 
 	@Override
 	public SalesOrder placeOrder(PurchaseOrder purchaseOrder)
@@ -142,6 +143,11 @@ public class OrderService implements OrderServiceRemote {
 		}
 	}
 
+	private void processOrder(Order order) {
+		Message message = jmsContext.createTextMessage(String.valueOf(order.getNumber()));
+		jmsContext.createProducer().send(queue, message);
+	}
+
 	private SalesOrder convertOrder(Order order) {
 		return new SalesOrder(order.getNumber(), order.getDate(), order.getAmount(), order.getStatus(),
 				convertCustomer(order.getCustomer()), order.getAddress(), order.getCreditCard(), order.getItems());
@@ -149,11 +155,5 @@ public class OrderService implements OrderServiceRemote {
 
 	private CustomerInfo convertCustomer(Customer customer) {
 		return new CustomerInfo(customer.getNumber(), customer.getFirstName(), customer.getLastName(), customer.getEmail());
-	}
-
-	private void processOrder(Order order){
-		JMSProducer producer = jmsContext.createProducer();
-		Message msg = jmsContext.createTextMessage(order.getOrderString());
-		producer.send(orderqueue, msg);
 	}
 }
