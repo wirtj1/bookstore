@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 
 import com.amazon.webservices.*;
@@ -14,13 +15,20 @@ import org.books.persistence.enumeration.BookBinding;
 public class AmazonCatalog {
 
     private static final String ASSOCIATE_TAG = "test0953-20";
-    private static final String ID_TYPE = "ISBN";
-    private static final String RESPONSE_GROUP_LOOKUP = "Medium";
-    private static final String RESPONSE_GROUP_SEARCH = "ItemAttributes";
     private static final String SEARCH_INDEX = "Books";
+    private static final String ID_TYPE = "ISBN";
+    private static final String RESPONSE_GROUP_SEARCH = "ItemAttributes";
     private static final String AVAILABLE = "Available";
+    private static final String RESPONSE_GROUP_LOOKUP = "Medium";
+
+    private AWSECommerceServicePortType awseCommerceServicePort;
 
 
+    @PostConstruct
+    public void init(){
+        AWSECommerceService awseCommerceService = new AWSECommerceService();
+        awseCommerceServicePort = awseCommerceService.getAWSECommerceServicePort();
+    }
     public Book itemLookup(String isbn) throws AmazonException {
         AWSECommerceService awseCommerceService = new AWSECommerceService();
         AWSECommerceServicePortType awseCommerceServicePort = awseCommerceService.getAWSECommerceServicePort();
