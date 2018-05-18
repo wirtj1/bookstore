@@ -9,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import org.books.application.exception.BookAlreadyExistsException;
 import org.books.application.exception.BookNotFoundException;
+import org.books.integration.AmazonCatalog;
 import org.books.persistence.entity.Book;
 import org.books.persistence.repository.BookRepository;
 
@@ -21,6 +22,8 @@ public class CatalogService implements CatalogServiceRemote {
 
 	private static final Logger logger = Logger.getLogger(CatalogService.class.getName());
 
+	@EJB
+	private AmazonCatalog amazonCatalog;
 	@EJB
 	private BookRepository bookRepository;
 
@@ -39,8 +42,12 @@ public class CatalogService implements CatalogServiceRemote {
 		logger.log(Level.INFO, "Finding book with isbn ''{0}''", isbn);
 		Book book = bookRepository.find(isbn);
 		if (book == null) {
-			logger.log(Level.INFO, "Book not found");
-			throw new BookNotFoundException();
+			book = amazonCatalog.itemLookup(isbn);
+			if (book == null) {
+				logger.log(Level.INFO, "Book not found");
+				throw new BookNotFoundException();
+			}
+			bookRepository.persist(book);
 		}
 		return book;
 	}
@@ -48,7 +55,7 @@ public class CatalogService implements CatalogServiceRemote {
 	@Override
 	public List<Book> searchBooks(String keywords) {
 		logger.log(Level.INFO, "Searching books with keywords ''{0}''", keywords);
-		return bookRepository.search(keywords);
+		return amazonCatalog.itemSearch(keywords);
 	}
 
 	@Override

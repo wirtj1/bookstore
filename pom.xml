@@ -7,10 +7,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.books</groupId>
-	<artifactId>bookstore-ejb</artifactId>
+	<artifactId>bookstore</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<packaging>ejb</packaging>
-	<name>bookstore-ejb</name>
+	<packaging>pom</packaging>
+	<name>bookstore</name>
+
+	<modules>
+		<module>bookstore-app</module>
+		<module>bookstore-ejb</module>
+		<module>bookstore-web</module>
+	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,100 +44,37 @@
 	</dependencies>
 
 	<build>
-        <finalName>bookstore-ejb</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.jvnet.jax-ws-commons</groupId>
-				<artifactId>jaxws-maven-plugin</artifactId>
-				<version>2.3</version>
-				<!-- Workaround for Bug JAX_WS_COMMONS-129 -->
-				<configuration>
-					<vmArgs>
-						<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-					</vmArgs>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>wsimport</goal>
-						</goals>
-						<configuration>
-							<wsdlUrls>
-								<wsdlUrl>http://webservices.amazon.com/AWSECommerceService/AWSECommerceService.wsdl</wsdlUrl>
-							</wsdlUrls>
-							<packageName>com.amazon.webservices</packageName>
-							<sourceDestDir>${project.build.directory}/generated-sources/wsimport</sourceDestDir>
-							<destDir>${project.build.directory}/generated-sources/handler</destDir>
-							<bindingFiles>
-								<bindingFile>${basedir}/src/main/config/bindings.xml</bindingFile>
-							</bindingFiles>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.2</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-ejb-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<ejbVersion>3.2</ejbVersion>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.17</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
-				<configuration>
-					<quiet>true</quiet>
-					<doctitle>Bookstore API</doctitle>
-					<show>private</show>
-					<notimestamp>true</notimestamp>
-					<additionalparam>-Xdoclint:none</additionalparam>
-					<excludePackageNames>com.amazon.webservice</excludePackageNames>
-				</configuration>
-			</plugin>
-            <!--<plugin>-->
-                <!--<artifactId>maven-antrun-plugin</artifactId>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>install</phase>-->
-                        <!--<configuration>-->
-                            <!--<tasks>-->
-                                <!--<copy file="target/bookstore-ejb.jar"-->
-                                      <!--todir="C:\Program Files (x86)\glassfish-4.1.1\glassfish\domains\bookstore\autodeploy"/>-->
-                            <!--</tasks>-->
-                        <!--</configuration>-->
-                        <!--<goals>-->
-                            <!--<goal>run</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-		</plugins>
-
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-			<resource>
-				<directory>${project.build.directory}/generated-sources/handler</directory>
-			</resource>
-		</resources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.2</version>
+					<configuration>
+						<source>1.7</source>
+						<target>1.7</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>2.17</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.10.3</version>
+					<configuration>
+						<quiet>true</quiet>
+						<doctitle>Bookstore API</doctitle>
+						<show>private</show>
+						<notimestamp>true</notimestamp>
+						<additionalparam>-Xdoclint:none</additionalparam>
+						<excludePackageNames>com.amazon.webservice</excludePackageNames>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>
